@@ -4,34 +4,34 @@
 
 // ── Personal ─────────────────────────────────────────────────
 export const PERSON = {
-  fullName:  'Nicolas Raja Oloan Manurung',
+  fullName: 'Nicolas Raja Oloan Manurung',
   shortName: 'Nicolas Manurung',
-  initials:  'NM',
-  title:     'Software Engineer',
-  location:  'Jakarta, Indonesia',
+  initials: 'NM',
+  title: 'Software Engineer',
+  location: 'Jakarta, Indonesia',
   locationShort: 'Jakarta, ID',
-  email:     'manurungnico02@gmail.com',
-  website:   'nicomnr.site',
-  websiteUrl:'https://nicomnr.site',
-  status:    'Open to work',
-  bio:       'A software engineer who designs, builds and ships reliable software products. Has helped 3+ running businesses operate more effectively and efficiently.',
-  lede:      'I design, build and ship reliable software, mostly backend services in Go. Here is my biodata as a schema. Drag the tables around.',
+  email: 'manurungnico02@gmail.com',
+  website: 'nicomnr.site',
+  websiteUrl: 'https://nicomnr.site',
+  status: 'Open to work',
+  bio: 'A software engineer who designs, builds and ships reliable software products. Has helped 3+ running businesses operate more effectively and efficiently.',
+  lede: 'I design, build and ship reliable and scalable product. Here is my biodata as a schema. Drag the tables around.',
 };
 
 // ── Navigation ───────────────────────────────────────────────
 export const NAV_LINKS = [
-  { href: '#me',        label: 'Me'        },
-  { href: '#lab',       label: 'Lab'       },
+  { href: '#me', label: 'Me' },
+  { href: '#lab', label: 'Lab' },
   { href: '#education', label: 'Education' },
-  { href: '#contact',   label: 'Contact'   },
+  { href: '#contact', label: 'Contact' },
 ];
 
 // ── Page titles ──────────────────────────────────────────────
 export const PAGE_TITLES = {
-  me:        'Nicolas Manurung :: Software Engineer',
-  lab:       'Lab :: Nicolas Manurung',
+  me: 'Nicolas Manurung :: Software Engineer',
+  lab: 'Lab :: Nicolas Manurung',
   education: 'Education :: Nicolas Manurung',
-  contact:   'Contact :: Nicolas Manurung',
+  contact: 'Contact :: Nicolas Manurung',
 };
 
 // ── DB-diagram tables (Me section) ───────────────────────────
@@ -41,54 +41,54 @@ export const DB_TABLES = [
   {
     id: 't-person', label: 'person', color: '#3b6ea8', x: 30, y: 30, wide: true,
     rows: [
-      { id: 'person.id',  key: 'id',        value: 'integer',                        tag: 'pk' },
-      {                   key: 'full_name',  value: 'Nicolas Raja Oloan Manurung'               },
-      {                   key: 'title',      value: 'Software Engineer'                         },
-      {                   key: 'location',   value: 'Jakarta, Indonesia'                        },
-      {                   key: 'email',      value: 'manurungnico02@gmail.com', isEmail: true   },
-      {                   key: 'profile',    value: 'nicomnr.site', isLink: true, href: 'https://nicomnr.site' },
+      { id: 'person.id', key: 'id', value: 'integer', tag: 'pk' },
+      { key: 'full_name', value: 'Nicolas Raja Oloan Manurung' },
+      { key: 'title', value: 'Software Engineer' },
+      { key: 'location', value: 'Jakarta, Indonesia' },
+      { key: 'email', value: 'manurungnico02@gmail.com', isEmail: true },
+      { key: 'profile', value: 'nicomnr.site', isLink: true, href: 'https://nicomnr.site' },
     ],
     note: 'Note: A software engineer who designs, builds and ships reliable software products. Has helped 3+ running businesses operate more effectively and efficiently.',
   },
   {
     id: 't-skill', label: 'skill', color: '#2f8f83', x: 640, y: 30,
     rows: [
-      {                   key: 'id',               value: 'integer',    tag: 'pk' },
-      { id: 'skill.fk',  key: 'person_id',         value: 'integer',    tag: 'fk' },
-      {                   key: 'Go',                value: 'language'              },
-      {                   key: 'Javascript',        value: 'language'              },
-      {                   key: 'PHP',               value: 'language'              },
-      {                   key: 'Dart',              value: 'language'              },
-      {                   key: 'SQL',               value: 'database'              },
-      {                   key: 'NoSQL',             value: 'database'              },
-      {                   key: 'Event-driven tools',value: 'broker, cdc'           },
-      {                   key: 'GCP',               value: 'cloud'                 },
-      {                   key: 'DSA',               value: 'core'                  },
-      {                   key: 'Problem solving',   value: 'core'                  },
-      {                   key: 'Design system architecture', value: 'core'          },
-      {                   key: 'Communication',     value: 'core'                  },
+      { key: 'id', value: 'integer', tag: 'pk' },
+      { id: 'skill.fk', key: 'person_id', value: 'integer', tag: 'fk' },
+      { key: 'Go', value: 'language' },
+      { key: 'Javascript', value: 'language' },
+      { key: 'PHP', value: 'language' },
+      { key: 'Dart', value: 'language' },
+      { key: 'SQL', value: 'database' },
+      { key: 'NoSQL', value: 'database' },
+      { key: 'Event-driven tools', value: 'broker, cdc' },
+      { key: 'GCP', value: 'cloud' },
+      { key: 'DSA', value: 'core' },
+      { key: 'Problem solving', value: 'core' },
+      { key: 'Design system architecture', value: 'core' },
+      { key: 'Communication', value: 'core' },
     ],
   },
   {
     id: 't-exp', label: 'experience', color: '#8a5a9e', x: 30, y: 400,
     rows: [
-      {                  key: 'id',               value: 'integer',      tag: 'pk' },
-      { id: 'exp.fk',   key: 'person_id',         value: 'integer',      tag: 'fk' },
-      {                  key: 'universal_biller',  value: '2025 to now'             },
-      {                  key: 'los_credit_card',   value: '2025'                    },
-      {                  key: 'madhani_one',        value: '2024 to 2025'            },
-      {                  key: 'kokarmina',          value: '2023 to 2024'            },
-      {                  key: 'remote_attendance',  value: '2023'                    },
+      { key: 'id', value: 'integer', tag: 'pk' },
+      { id: 'exp.fk', key: 'person_id', value: 'integer', tag: 'fk' },
+      { key: 'universal_biller', value: '2025 to now' },
+      { key: 'los_credit_card', value: '2025' },
+      { key: 'madhani_one', value: '2024 to 2025' },
+      { key: 'kokarmina', value: '2023 to 2024' },
+      { key: 'remote_attendance', value: '2023' },
     ],
   },
   {
     id: 't-edu', label: 'education', color: '#b0703a', x: 350, y: 430,
     rows: [
-      {                  key: 'id',                 value: 'integer',      tag: 'pk' },
-      { id: 'edu.fk',   key: 'person_id',           value: 'integer',      tag: 'fk' },
-      {                  key: 'universitas_advent',  value: '2020 to 2023'            },
-      {                  key: 'ruangguru',            value: '2022'                    },
-      {                  key: 'bangkit',              value: '2023'                    },
+      { key: 'id', value: 'integer', tag: 'pk' },
+      { id: 'edu.fk', key: 'person_id', value: 'integer', tag: 'fk' },
+      { key: 'universitas_advent', value: '2020 to 2023' },
+      { key: 'ruangguru', value: '2022' },
+      { key: 'bangkit', value: '2023' },
     ],
   },
 ];
@@ -109,7 +109,7 @@ export const EXPERIENCES = [
       'Built a secure session termination flow backed by a JWT blocker, plus custom rate limiting modules that protect MFA, OTP and password reset endpoints.',
       'Developed a full partner lifecycle and product management system with internal APIs and cross-service integration.',
     ],
-    st: ['Go','PostgreSQL','Redis cache-queue','Kafka'],
+    st: ['Go', 'PostgreSQL', 'Redis cache-queue', 'Kafka'],
   },
   {
     h: 150, ab: 'LOS', t: 'Loan Origination System, credit card program', tag: 'Fullstack',
@@ -123,7 +123,7 @@ export const EXPERIENCES = [
       'Resolved 2+ critical production issues in LOS Web and LOSBRICC stored procedures.',
       'Documented key system components and workflows for LOS and BRISPOT.',
     ],
-    st: ['JavaScript','TypeScript','Node.js','Express.js','ASP.NET','MSSQL','MySQL','Redis cache-queue','VM','pm2'],
+    st: ['JavaScript', 'TypeScript', 'Node.js', 'Express.js', 'ASP.NET', 'MSSQL', 'MySQL', 'Redis cache-queue', 'VM', 'pm2'],
   },
   {
     h: 30, ab: 'ONE', t: 'Madhani One Superapp', tag: 'Backend',
@@ -136,7 +136,7 @@ export const EXPERIENCES = [
       'Improved the notification interval configuration service for courses, classes, tests and evaluations of Health, Safety and Environment (HSE).',
       'Worked in a CI/CD and agile flow with BA, QA, FE and DevOps.',
     ],
-    st: ['Go','Fiber','PostgreSQL','QuestDB','MongoDB','Redis','Confluent Kafka','WebSocket','Docker','CI/CD','Cloud management'],
+    st: ['Go', 'Fiber', 'PostgreSQL', 'QuestDB', 'MongoDB', 'Redis', 'Confluent Kafka', 'WebSocket', 'Docker', 'CI/CD', 'Cloud management'],
   },
   {
     h: 280, ab: 'KKM', t: 'Kokarmina, Rumah Sakit Hermina', tag: 'Backend',
@@ -147,7 +147,7 @@ export const EXPERIENCES = [
       'Built a disbursement and payouts service with loan terms, and a savings service integrated with a payment connector.',
       'Worked in a CI/CD and agile flow with QA, FE and DevOps.',
     ],
-    st: ['Go','Echo','MySQL','Jenkins','CI/CD'],
+    st: ['Go', 'Echo', 'MySQL', 'Jenkins', 'CI/CD'],
   },
   {
     h: 330, ab: 'RAA', t: 'Remote Attendance App', tag: 'Intern',
@@ -158,7 +158,7 @@ export const EXPERIENCES = [
       'Developed roster scheduling, user management, role permission and system settings services using Fiber (Go), gRPC and Kafka.',
       'Worked in a CI/CD and agile flow with QA, FE and DevOps.',
     ],
-    st: ['Go','Fiber','gRPC','PostgreSQL','QuestDB','MongoDB','Redis','Confluent Kafka','WebSocket','Docker','CI/CD'],
+    st: ['Go', 'Fiber', 'gRPC', 'PostgreSQL', 'QuestDB', 'MongoDB', 'Redis', 'Confluent Kafka', 'WebSocket', 'Docker', 'CI/CD'],
   },
 ];
 
@@ -198,19 +198,19 @@ export const EDUCATION = [
 
 // ── Contact ───────────────────────────────────────────────────
 export const CONTACT = {
-  greeting:    'Dear Nico,',
-  topics:      ['New business', 'A collaboration', 'Just a hello'],
+  greeting: 'Dear Nico,',
+  topics: ['New business', 'A collaboration', 'Just a hello'],
   defaultTopic: 'New business',
   fromPlaceholder: 'Your name and email',
-  msgPlaceholder:  'Write your note here',
-  signLabel:   'SIGN HERE WITH YOUR FINGER, MOUSE OR PEN',
+  msgPlaceholder: 'Write your note here',
+  signLabel: 'SIGN HERE WITH YOUR FINGER, MOUSE OR PEN',
   statusUnsigned: 'ONE REPLY, NO NEWSLETTER. NOT YET SIGNED',
-  statusSigned:   'SIGNED. READY TO SEND',
-  ticketHeader:   'NICOLAS MANURUNG :: INTAKE',
+  statusSigned: 'SIGNED. READY TO SEND',
+  ticketHeader: 'NICOLAS MANURUNG :: INTAKE',
 
   // Email delivery
-  email:          'manurungnico02@gmail.com',
-  web3formsKey:   'e330091b-cd45-448a-bbe5-b8d9a4f3a329',
+  email: 'manurungnico02@gmail.com',
+  web3formsKey: 'e330091b-cd45-448a-bbe5-b8d9a4f3a329',
 
   // Set to true to show the timestamped send log below the letter after clicking "Send it".
   // Set to false to hide it (clean look for production).
