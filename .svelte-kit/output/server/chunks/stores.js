@@ -5,7 +5,7 @@ const PERSON = {
   title: "Software Engineer",
   locationShort: "Jakarta, ID",
   status: "Open to work",
-  lede: "I design, build and ship reliable software, mostly backend services in Go. Here is my biodata as a schema. Drag the tables around."
+  lede: "I design, build and ship reliable and scalable product. Here is my biodata as a schema. Drag the tables around."
 };
 const NAV_LINKS = [
   { href: "#me", label: "Me" },

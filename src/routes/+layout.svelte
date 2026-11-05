@@ -9,6 +9,14 @@
   let navTag = 'Me';
   const MODES = ['system', 'light', 'dark'];
   let mi = 0;
+  let menuOpen = false;
+
+  function toggleMenu() {
+    menuOpen = !menuOpen;
+  }
+  function closeMenu() {
+    menuOpen = false;
+  }
 
   // ── Clock ───────────────────────────────────────────────────
   function tickClock() {
@@ -59,6 +67,7 @@
   }
 
   function route() {
+    closeMenu();
     const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
     if (!boot && !reduce && document.startViewTransition) {
       document.startViewTransition(sw);
@@ -68,6 +77,12 @@
     boot = false;
   }
 
+  function handleKeydown(e) {
+    if (e.key === 'Escape' && menuOpen) {
+      closeMenu();
+    }
+  }
+
   onMount(() => {
     try { mi = Math.max(0, MODES.indexOf(localStorage.getItem('theme'))); } catch (_) {}
     applyTheme();
@@ -75,9 +90,11 @@
     const timer = setInterval(tickClock, 30000);
     route();
     window.addEventListener('hashchange', route);
+    window.addEventListener('keydown', handleKeydown);
     return () => {
       clearInterval(timer);
       window.removeEventListener('hashchange', route);
+      window.removeEventListener('keydown', handleKeydown);
     };
   });
 
@@ -114,10 +131,12 @@
 </div>
 
 <nav>
-  <a class="logo" href="#me">
+  <a class="logo" href="#me" on:click={closeMenu}>
     {PERSON.initials}<small class="mono mut" style="margin-left:.5rem;font-weight:400">{navTag}</small>
   </a>
-  <ul>
+
+  <!-- Desktop Navigation Menu -->
+  <ul class="nav-desktop">
     {#each NAV_LINKS as link}
       <li>
         <a
@@ -127,12 +146,64 @@
       </li>
     {/each}
     <li>
-      <button class="mono" aria-label="Change theme" on:click={cycleTheme}>
+      <button class="mono theme-btn" aria-label="Change theme" on:click={cycleTheme}>
         {themeLabel}
       </button>
     </li>
   </ul>
+
+  <!-- Modern Mobile Hamburger Button -->
+  <button
+    type="button"
+    class="burger-btn"
+    class:open={menuOpen}
+    aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+    aria-expanded={menuOpen}
+    on:click={toggleMenu}
+  >
+    <span class="burger-line top"></span>
+    <span class="burger-line mid"></span>
+    <span class="burger-line bot"></span>
+  </button>
 </nav>
+
+<!-- Modern Mobile Menu Drawer -->
+{#if menuOpen}
+  <div
+    class="mobile-backdrop"
+    on:click={closeMenu}
+    role="presentation"
+  ></div>
+
+  <div class="mobile-menu" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+    <div class="mobile-menu-header">
+      <span class="mono mut">Navigation</span>
+      <button class="mono theme-btn mobile-theme-btn" aria-label="Change theme" on:click={cycleTheme}>
+        {themeLabel}
+      </button>
+    </div>
+    <ul class="mobile-nav-links">
+      {#each NAV_LINKS as link}
+        <li>
+          <a
+            href={link.href}
+            class:active={currentSection === link.href.slice(1)}
+            aria-current={currentSection === link.href.slice(1) ? 'page' : undefined}
+            on:click={closeMenu}
+          >
+            <span>{link.label}</span>
+            <span class="link-arrow">&rarr;</span>
+          </a>
+        </li>
+      {/each}
+    </ul>
+    <div class="mobile-menu-footer mono mut">
+      <span>{PERSON.locationShort}</span>
+      <span>•</span>
+      <span>{PERSON.status}</span>
+    </div>
+  </div>
+{/if}
 
 <main>
   <slot />

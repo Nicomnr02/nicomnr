@@ -227,7 +227,22 @@
     // Also handle the custom event for backward compat (e.g. first load on #contact)
     const handler = () => fitCanvas();
     window.addEventListener('fitcanvas', handler);
-    return () => window.removeEventListener('fitcanvas', handler);
+
+    let resizeTimer;
+    const onResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (isActive && canvasEl && !signed) {
+          fitCanvas();
+        }
+      }, 150);
+    };
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      window.removeEventListener('fitcanvas', handler);
+      window.removeEventListener('resize', onResize);
+    };
   });
 </script>
 
@@ -288,7 +303,7 @@
 
       <div class="row">
         <span class="mono" id="state">{statusMsg}</span>
-        <span>
+        <div class="row-actions">
           {#if !copyHidden}
             <button type="button" class="lnk" on:click={copyLetter}>{copyLabel}</button>{' '}
           {/if}
@@ -300,7 +315,7 @@
               Send it
             </button>
           {/if}
-        </span>
+        </div>
       </div>
 
       <!-- ── Send log (configured via CONTACT.showSendLog in data.js) ── -->

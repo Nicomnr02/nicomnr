@@ -124,6 +124,7 @@
   </div>
 
   <p class="hint mono mut">
-    experience.person_id, education.person_id and skill.person_id all reference person.id
+    <span class="desktop-hint">experience.person_id, education.person_id and skill.person_id all reference person.id</span>
+    <span class="mobile-hint">Scroll diagram horizontally to explore &bull; Drag headers to rearrange</span>
   </p>
 </section>

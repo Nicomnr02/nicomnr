@@ -1,5 +1,5 @@
 import "clsx";
-import { ab as store_get, ac as attr_class, e as escape_html, a8 as ensure_array_like, a9 as attr, ad as attr_style, ae as stringify, af as unsubscribe_stores } from "../../chunks/index.js";
+import { ac as store_get, aa as attr_class, e as escape_html, a8 as ensure_array_like, a9 as attr, ad as attr_style, ae as stringify, af as unsubscribe_stores } from "../../chunks/index.js";
 import { D as DB_TABLES, a as activeSection, P as PERSON, E as EXPERIENCES, b as EDUCATION, C as CONTACT } from "../../chunks/stores.js";
 function SectionMe($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
@@ -38,7 +38,7 @@ function SectionMe($$renderer, $$props) {
       }
       $$renderer2.push(`<!--]--></div>`);
     }
-    $$renderer2.push(`<!--]--></div></div> <p class="hint mono mut">experience.person_id, education.person_id and skill.person_id all reference person.id</p></section>`);
+    $$renderer2.push(`<!--]--></div></div> <p class="hint mono mut"><span class="desktop-hint">experience.person_id, education.person_id and skill.person_id all reference person.id</span> <span class="mobile-hint">Scroll diagram horizontally to explore • Drag headers to rearrange</span></p></section>`);
     if ($$store_subs) unsubscribe_stores($$store_subs);
   });
 }
@@ -125,7 +125,7 @@ function SectionContact($$renderer, $$props) {
     if ($$body) {
       $$renderer2.push(`${$$body}`);
     }
-    $$renderer2.push(`</textarea> <p style="margin:1.2rem 0 0">Sincerely,</p> <label for="sig">${escape_html(CONTACT.signLabel)}</label> <canvas id="sig" aria-label="Signature pad"${attr_style("")}></canvas> <div${attr_class("stamp", void 0, { "hit": stampHit })} id="stamp" aria-hidden="true"><b>RECEIVED</b> <span>${escape_html(sdStr)}</span></div> <div class="row"><span class="mono" id="state">${escape_html(statusMsg)}</span> <span>`);
+    $$renderer2.push(`</textarea> <p style="margin:1.2rem 0 0">Sincerely,</p> <label for="sig">${escape_html(CONTACT.signLabel)}</label> <canvas id="sig" aria-label="Signature pad"${attr_style("")}></canvas> <div${attr_class("stamp", void 0, { "hit": stampHit })} id="stamp" aria-hidden="true"><b>RECEIVED</b> <span>${escape_html(sdStr)}</span></div> <div class="row"><span class="mono" id="state">${escape_html(statusMsg)}</span> <div class="row-actions">`);
     {
       $$renderer2.push("<!--[-1-->");
     }
@@ -137,7 +137,7 @@ function SectionContact($$renderer, $$props) {
     {
       $$renderer2.push(`<!--[0--><button type="button" class="go"${attr("disabled", sendDisabled, true)}>Send it</button>`);
     }
-    $$renderer2.push(`<!--]--></span></div> `);
+    $$renderer2.push(`<!--]--></div></div> `);
     {
       $$renderer2.push("<!--[-1-->");
     }
