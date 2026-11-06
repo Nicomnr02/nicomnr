@@ -228,11 +228,14 @@
     const handler = () => fitCanvas();
     window.addEventListener('fitcanvas', handler);
 
+    fitCanvas();
+    const timer = setTimeout(fitCanvas, 60);
+
     let resizeTimer;
     const onResize = () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
-        if (isActive && canvasEl && !signed) {
+        if (canvasEl && !signed) {
           fitCanvas();
         }
       }, 150);
@@ -240,13 +243,14 @@
     window.addEventListener('resize', onResize);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('fitcanvas', handler);
       window.removeEventListener('resize', onResize);
     };
   });
 </script>
 
-<section id="contact" class:on={isActive} class:in={isActive}>
+<section id="contact" class="page-section">
   <h1>Contact</h1>
   <div class="ct">
 
@@ -343,7 +347,7 @@
       </dl>
       <p class="mut" style="margin-top:1.4rem">
         Email: <a href="mailto:{CONTACT.email}">{CONTACT.email}</a><br>
-        Web: <a href="https://nicomnr.site">nicomnr.site</a>
+        Web: <a href="https://nicomnr.my.id">nicomnr.my.id</a>
       </p>
     </aside>
   </div>

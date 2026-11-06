@@ -10,6 +10,14 @@
       "_internal.js"
     ]
   },
+  "_blogs.js": {
+    "file": "chunks/blogs.js",
+    "name": "blogs"
+  },
+  "_data.js": {
+    "file": "chunks/data.js",
+    "name": "data"
+  },
   "_exports.js": {
     "file": "chunks/exports.js",
     "name": "exports"
@@ -43,13 +51,6 @@
   "_server.js": {
     "file": "chunks/server.js",
     "name": "server"
-  },
-  "_stores.js": {
-    "file": "chunks/stores.js",
-    "name": "stores",
-    "imports": [
-      "_index2.js"
-    ]
   },
   "_utils.js": {
     "file": "chunks/utils.js",
@@ -99,6 +100,12 @@
       "_internal.js"
     ]
   },
+  "src/routes/+layout.js": {
+    "file": "entries/pages/_layout.js",
+    "name": "entries/pages/_layout",
+    "src": "src/routes/+layout.js",
+    "isEntry": true
+  },
   "src/routes/+layout.svelte": {
     "file": "entries/pages/_layout.svelte.js",
     "name": "entries/pages/_layout.svelte",
@@ -106,10 +113,10 @@
     "isEntry": true,
     "imports": [
       "_index.js",
-      "_stores.js"
+      "_data.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.CDfLFfOa.css"
+      "_app/immutable/assets/_layout.CxSNYJPr.css"
     ]
   },
   "src/routes/+page.svelte": {
@@ -119,10 +126,34 @@
     "isEntry": true,
     "imports": [
       "_index.js",
-      "_stores.js"
+      "_data.js",
+      "_index2.js",
+      "_blogs.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.D8W8aS7p.css"
+      "_app/immutable/assets/_page.DYkoypFM.css"
+    ]
+  },
+  "src/routes/blog/[slug]/+page.js": {
+    "file": "entries/pages/blog/_slug_/_page.js",
+    "name": "entries/pages/blog/_slug_/_page",
+    "src": "src/routes/blog/[slug]/+page.js",
+    "isEntry": true,
+    "imports": [
+      "_blogs.js"
+    ]
+  },
+  "src/routes/blog/[slug]/+page.svelte": {
+    "file": "entries/pages/blog/_slug_/_page.svelte.js",
+    "name": "entries/pages/blog/_slug_/_page.svelte",
+    "src": "src/routes/blog/[slug]/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_data.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page.B2EN63Ju.css"
     ]
   },
   "virtual:__sveltekit/env": {

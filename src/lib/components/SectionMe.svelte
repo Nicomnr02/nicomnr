@@ -70,6 +70,7 @@
     });
 
     draw();
+    requestAnimationFrame(() => draw());
 
     window.addEventListener('drawlines',   draw);
     window.addEventListener('themechange', draw);
@@ -78,11 +79,9 @@
       window.removeEventListener('themechange', draw);
     };
   });
-
-  $: isActive = $activeSection === 'me';
 </script>
 
-<section id="me" class:on={isActive} class:in={isActive}>
+<section id="me" class="page-section emerged">
   <h1>{PERSON.shortName}, {PERSON.title}</h1>
   <p class="lede">{PERSON.lede}</p>
 

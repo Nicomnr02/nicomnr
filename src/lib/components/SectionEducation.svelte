@@ -7,19 +7,26 @@
 
   let cards = [];
 
-  // Swing animation triggered once when the section is first entered
-  onMount(() => {
-    window.addEventListener('educationenter', () => {
-      cards.forEach(c => {
-        if (!c) return;
-        c.classList.add('swing');
-        c.addEventListener('animationend', () => c.classList.remove('swing'), { once: true });
-      });
+  let swung = false;
+
+  function doSwing() {
+    if (swung) return;
+    swung = true;
+    cards.forEach(c => {
+      if (!c) return;
+      c.classList.add('swing');
+      c.addEventListener('animationend', () => c.classList.remove('swing'), { once: true });
     });
+  }
+
+  // Swing animation triggered when the section scrolls into view
+  onMount(() => {
+    window.addEventListener('educationenter', doSwing);
+    return () => window.removeEventListener('educationenter', doSwing);
   });
 </script>
 
-<section id="education" class:on={isActive} class:in={isActive}>
+<section id="education" class="page-section">
   <h1>Education</h1>
   <div class="edu">
     {#each EDUCATION as edu, i}

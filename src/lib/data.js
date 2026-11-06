@@ -11,8 +11,8 @@ export const PERSON = {
   location: 'Jakarta, Indonesia',
   locationShort: 'Jakarta, ID',
   email: 'manurungnico02@gmail.com',
-  website: 'nicomnr.site',
-  websiteUrl: 'https://nicomnr.site',
+  website: 'nicomnr.my.id',
+  websiteUrl: 'https://nicomnr.my.id',
   status: 'Open to work',
   bio: 'A software engineer who designs, builds and ships reliable software products. Has helped 3+ running businesses operate more effectively and efficiently.',
   lede: 'I design, build and ship reliable and scalable product. Here is my biodata as a schema. Drag the tables around.',
@@ -23,6 +23,7 @@ export const NAV_LINKS = [
   { href: '#me', label: 'Me' },
   { href: '#lab', label: 'Lab' },
   { href: '#education', label: 'Education' },
+  { href: '#blog', label: 'Blog' },
   { href: '#contact', label: 'Contact' },
 ];
 
@@ -31,6 +32,7 @@ export const PAGE_TITLES = {
   me: 'Nicolas Manurung :: Software Engineer',
   lab: 'Lab :: Nicolas Manurung',
   education: 'Education :: Nicolas Manurung',
+  blog: 'Blog :: Nicolas Manurung',
   contact: 'Contact :: Nicolas Manurung',
 };
 
@@ -46,7 +48,7 @@ export const DB_TABLES = [
       { key: 'title', value: 'Software Engineer' },
       { key: 'location', value: 'Jakarta, Indonesia' },
       { key: 'email', value: 'manurungnico02@gmail.com', isEmail: true },
-      { key: 'profile', value: 'nicomnr.site', isLink: true, href: 'https://nicomnr.site' },
+      { key: 'profile', value: 'nicomnr.my.id', isLink: true, href: 'https://nicomnr.my.id' },
     ],
     note: 'Note: A software engineer who designs, builds and ships reliable software products. Has helped 3+ running businesses operate more effectively and efficiently.',
   },

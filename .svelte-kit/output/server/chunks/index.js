@@ -3464,6 +3464,15 @@ function slot(renderer, $$props, name, slot_props, fallback_fn) {
     slot_fn(renderer, slot_props);
   }
 }
+function bind_props(props_parent, props_now) {
+  for (const key of Object.keys(props_now)) {
+    const initial_value = props_parent[key];
+    const value = props_now[key];
+    if (initial_value === void 0 && value !== void 0 && Object.getOwnPropertyDescriptor(props_parent, key)?.set) {
+      props_parent[key] = value;
+    }
+  }
+}
 function ensure_array_like(array_like_or_iterator) {
   if (array_like_or_iterator) {
     return array_like_or_iterator.length !== void 0 ? array_like_or_iterator : Array.from(array_like_or_iterator);
@@ -3535,11 +3544,12 @@ export {
   attr as a9,
   attr_class as aa,
   slot as ab,
-  store_get as ac,
-  attr_style as ad,
-  stringify as ae,
+  attr_style as ac,
+  stringify as ad,
+  store_get as ae,
   unsubscribe_stores as af,
   safe_not_equal as ag,
+  bind_props as ah,
   HYDRATION_START as b,
   HYDRATION_START_ELSE as c,
   get_next_sibling as d,

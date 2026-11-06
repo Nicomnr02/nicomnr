@@ -6,10 +6,10 @@
 
   // ── State ───────────────────────────────────────────────────
   let clock = 'UT::--:--';
-  let navTag = 'Me';
   const MODES = ['system', 'light', 'dark'];
   let mi = 0;
   let menuOpen = false;
+  let currentSec = 'me';
 
   function toggleMenu() {
     menuOpen = !menuOpen;
@@ -41,40 +41,23 @@
   }
   $: themeLabel = 'Theme: ' + MODES[mi];
 
-  // ── Routing (hash-based) ────────────────────────────────────
-  const SECTIONS = ['me', 'lab', 'education', 'contact'];
-  let swung = false;
-  let boot  = true;
+  // ── Navigation & Section Spy ────────────────────────────────
+  $: navTag = currentSec[0].toUpperCase() + currentSec.slice(1);
 
-  function getHash() {
-    const h = (location.hash || '#me').slice(1);
-    return SECTIONS.includes(h) ? h : 'me';
-  }
-
-  function sw() {
-    const id = getHash();
-    activeSection.set(id);
-    navTag = id[0].toUpperCase() + id.slice(1);
-    document.title = PAGE_TITLES[id];
-
-    if (id === 'education' && !swung) {
-      swung = true;
-      window.dispatchEvent(new CustomEvent('educationenter'));
-    }
-    if (id === 'me')      window.dispatchEvent(new CustomEvent('drawlines'));
-    if (id === 'contact') window.dispatchEvent(new CustomEvent('fitcanvas'));
-    window.scrollTo(0, 0);
-  }
-
-  function route() {
+  function scrollToSection(e, href) {
+    e.preventDefault();
     closeMenu();
-    const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
-    if (!boot && !reduce && document.startViewTransition) {
-      document.startViewTransition(sw);
-    } else {
-      sw();
+    const id = href.replace(/^#/, '');
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+      try {
+        history.pushState(null, '', href);
+      } catch (_) {}
+      currentSec = id;
+      activeSection.set(id);
+      document.title = PAGE_TITLES[id] || PAGE_TITLES.me;
     }
-    boot = false;
   }
 
   function handleKeydown(e) {
@@ -83,23 +66,83 @@
     }
   }
 
+  const SECTIONS = ['me', 'lab', 'education', 'blog', 'contact'];
+  let observer;
+
   onMount(() => {
     try { mi = Math.max(0, MODES.indexOf(localStorage.getItem('theme'))); } catch (_) {}
     applyTheme();
     tickClock();
     const timer = setInterval(tickClock, 30000);
-    route();
-    window.addEventListener('hashchange', route);
     window.addEventListener('keydown', handleKeydown);
+
+    // Scroll spy & emerge observer for the melded long page
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          if (SECTIONS.includes(id)) {
+            currentSec = id;
+            activeSection.set(id);
+            document.title = PAGE_TITLES[id] || PAGE_TITLES.me;
+          }
+          entry.target.classList.add('emerged');
+
+          if (id === 'education') {
+            window.dispatchEvent(new CustomEvent('educationenter'));
+          }
+          if (id === 'me') {
+            window.dispatchEvent(new CustomEvent('drawlines'));
+          }
+          if (id === 'contact') {
+            window.dispatchEvent(new CustomEvent('fitcanvas'));
+          }
+        }
+      });
+    }, {
+      root: null,
+      rootMargin: '-10% 0px -40% 0px',
+      threshold: 0.05
+    });
+
+    SECTIONS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    // Immediately reveal any sections already in the viewport on mount
+    // (handles browser Back navigation where sections are already scrolled into view)
+    SECTIONS.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      if (inView) {
+        el.classList.add('emerged');
+        currentSec = id;
+        activeSection.set(id);
+        document.title = PAGE_TITLES[id] || PAGE_TITLES.me;
+      }
+    });
+
+    // Check if initial URL has hash or path to scroll to
+    const initialHash = window.location.hash ? window.location.hash.slice(1) : (window.location.pathname.replace(/^\//, '') || 'me');
+    if (SECTIONS.includes(initialHash)) {
+      currentSec = initialHash;
+      const el = document.getElementById(initialHash);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }, 120);
+      }
+    }
+
     return () => {
       clearInterval(timer);
-      window.removeEventListener('hashchange', route);
       window.removeEventListener('keydown', handleKeydown);
+      if (observer) observer.disconnect();
     };
   });
-
-  $: currentSection = '';
-  activeSection.subscribe(v => { currentSection = v; });
 </script>
 
 <svelte:head>
@@ -131,7 +174,7 @@
 </div>
 
 <nav>
-  <a class="logo" href="#me" on:click={closeMenu}>
+  <a class="logo" href="#me" on:click={(e) => scrollToSection(e, '#me')}>
     {PERSON.initials}<small class="mono mut" style="margin-left:.5rem;font-weight:400">{navTag}</small>
   </a>
 
@@ -141,7 +184,8 @@
       <li>
         <a
           href={link.href}
-          aria-current={currentSection === link.href.slice(1) ? 'page' : undefined}
+          aria-current={currentSec === link.href.replace(/^#/, '') ? 'page' : undefined}
+          on:click={(e) => scrollToSection(e, link.href)}
         >{link.label}</a>
       </li>
     {/each}
@@ -187,9 +231,9 @@
         <li>
           <a
             href={link.href}
-            class:active={currentSection === link.href.slice(1)}
-            aria-current={currentSection === link.href.slice(1) ? 'page' : undefined}
-            on:click={closeMenu}
+            class:active={currentSec === link.href.replace(/^#/, '')}
+            aria-current={currentSec === link.href.replace(/^#/, '') ? 'page' : undefined}
+            on:click={(e) => scrollToSection(e, link.href)}
           >
             <span>{link.label}</span>
             <span class="link-arrow">&rarr;</span>

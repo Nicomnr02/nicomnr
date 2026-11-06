@@ -1,37 +1,48 @@
 <script>
   import { onMount } from 'svelte';
   import { EXPERIENCES } from '$lib/data.js';
-  import { activeSection } from '$lib/stores.js';
 
   // ── View state ───────────────────────────────────────────────
-  let view = 'wheel';
-  let rot  = 0;
-  let tgt  = 0;
-  let last = null;
-  let idle;
-  let px, py, drag = 0, moved = 0;
+  // Default to 'slider' with middle card (#3, index 2) active
+  let view = 'slider';
+  let currentIndex = 2; // 0=Card 1, 1=Card 2, 2=Card 3, 3=Card 4, 4=Card 5
+  const TOTAL_ITEMS = EXPERIENCES.length;
+
   let dialogEl;
-  let itemsEl;
-  let dialogContent = null; // { x } when open
+  let dialogContent = null;
 
-  $: isActive = $activeSection === 'lab';
+  // Touch / pointer drag handling
+  let startX = 0;
+  let isDragging = false;
+  let dragDelta = 0;
 
-  // ── Wheel animation loop ─────────────────────────────────────
-  function spinLoop() {
-    rot += (tgt - rot) * 0.12;
-    if (Math.abs(tgt - rot) < 0.05) rot = tgt;
-    if (rot !== last) {
-      last = rot;
-      const ring = document.getElementById('ring');
-      if (ring) ring.style.setProperty('--rot', rot + 'deg');
+  function goToIndex(idx) {
+    if (idx >= 0 && idx < TOTAL_ITEMS) {
+      currentIndex = idx;
     }
-    requestAnimationFrame(spinLoop);
   }
 
-  function nudge(d) {
-    tgt += d;
-    clearTimeout(idle);
-    idle = setTimeout(() => { tgt = Math.round(tgt / 72) * 72; }, 160);
+  function nextCard() {
+    if (currentIndex < TOTAL_ITEMS - 1) {
+      currentIndex += 1;
+    }
+  }
+
+  function prevCard() {
+    if (currentIndex > 0) {
+      currentIndex -= 1;
+    }
+  }
+
+  function handleCardClick(i) {
+    if (Math.abs(dragDelta) > 10) return; // Ignore drag clicks
+    if (currentIndex === i) {
+      // Center card clicked -> open details dialog
+      openDialog(i);
+    } else {
+      // Side card clicked -> slide to center
+      goToIndex(i);
+    }
   }
 
   // ── Open detail dialog ────────────────────────────────────────
@@ -48,40 +59,79 @@
 
   // ── Keyboard ─────────────────────────────────────────────────
   function onKeyDown(e) {
-    if (view !== 'wheel' || $activeSection !== 'lab' || dialogEl?.open) return;
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); nudge(-72); }
-    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); nudge(72);  }
+    if (view !== 'slider' || dialogEl?.open) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); nextCard(); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); prevCard(); }
   }
 
-  // ── Pointer drag on wheel ─────────────────────────────────────
-  function onPointerMove(e) {
-    if (!drag) return;
-    const dx = e.clientX - px, dy = e.clientY - py;
-    px = e.clientX; py = e.clientY;
-    moved += Math.abs(dx) + Math.abs(dy);
-    nudge((dx + dy) * 0.35);
+  // ── Horizontal wheel scroll (immediate, no delay) ────────────
+  let hScrollAccum = 0;
+  let lastScrollTime = 0;
+
+  function onWheel(e) {
+    if (view !== 'slider') return;
+
+    const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+
+    if (isHorizontal) {
+      e.preventDefault();
+      const now = performance.now();
+      hScrollAccum += e.deltaX;
+
+      // Clean, immediate card transition without sluggish delay
+      if (Math.abs(hScrollAccum) >= 12 && now - lastScrollTime > 70) {
+        lastScrollTime = now;
+        if (hScrollAccum > 0) {
+          nextCard();
+        } else {
+          prevCard();
+        }
+        hScrollAccum = 0;
+      }
+    }
+    // Vertical scroll (e.deltaY): do not preventDefault so natural page scrolling is preserved!
   }
-  function onPointerUp() { drag = 0; }
+
+  // ── Pointer drag on slider ────────────────────────────────────
+  function onPointerDown(e) {
+    if (view !== 'slider') return;
+    isDragging = true;
+    startX = e.clientX;
+    dragDelta = 0;
+  }
+
+  function onPointerMove(e) {
+    if (!isDragging) return;
+    dragDelta = e.clientX - startX;
+  }
+
+  function onPointerUp() {
+    if (!isDragging) return;
+    isDragging = false;
+    if (dragDelta < -40) {
+      nextCard();
+    } else if (dragDelta > 40) {
+      prevCard();
+    }
+    setTimeout(() => { dragDelta = 0; }, 50);
+  }
 
   onMount(() => {
-    requestAnimationFrame(spinLoop);
-    window.addEventListener('keydown',      onKeyDown);
-    window.addEventListener('pointermove',  onPointerMove);
-    window.addEventListener('pointerup',    onPointerUp);
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('pointerup', onPointerUp);
     return () => {
-      window.removeEventListener('keydown',      onKeyDown);
-      window.removeEventListener('pointermove',  onPointerMove);
-      window.removeEventListener('pointerup',    onPointerUp);
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('pointerup', onPointerUp);
     };
   });
 </script>
 
-<section id="lab" class:on={isActive} class:in={isActive}>
+<section id="lab" class="page-section">
   <h1>Lab, work experience</h1>
 
   <!-- View selector -->
   <div class="tools" role="group" aria-label="View">
-    {#each ['list','wheel','grid'] as v}
+    {#each ['list', 'slider', 'grid'] as v}
       <button
         data-v={v}
         aria-pressed={view === v}
@@ -91,33 +141,68 @@
   </div>
 
   <!-- Items container -->
-  <div
-    role="region"
-    aria-label="Work experience items"
-    class="items {view}"
-    bind:this={itemsEl}
-    on:wheel|preventDefault={e => { if (view !== 'wheel') return; nudge(-(e.deltaX + e.deltaY) * 0.25); }}
-    on:pointerdown={e => { if (view !== 'wheel') return; drag = 1; moved = 0; px = e.clientX; py = e.clientY; }}
-    on:keydown={e => { if (view !== 'wheel') return; if (e.key === 'ArrowRight') nudge(-72); if (e.key === 'ArrowLeft') nudge(72); }}
-    on:click|capture={e => { if (moved > 6) { e.stopPropagation(); e.preventDefault(); moved = 0; } }}
-  >
-    {#if view === 'wheel'}
-      <div class="ring" id="ring">
+  {#if view === 'slider'}
+    <!-- Coverflow Perspective Slider matching 1 2 3 4 5 fanned layout -->
+    <div
+      class="slider-view"
+      on:wheel={onWheel}
+      on:pointerdown={onPointerDown}
+      on:pointermove={onPointerMove}
+      role="region"
+      aria-label="Work experience slider"
+    >
+      <div class="slider-track">
         {#each EXPERIENCES as x, i}
+          {@const offset = i - currentIndex}
           <button
-            class="it"
-            style="--h:{x.h};--i:{i}"
-            on:click={() => openDialog(i)}
+            type="button"
+            class="slider-card"
+            data-offset={offset}
+            style="--h:{x.h};"
+            aria-label="{x.t} - Card {i + 1}"
+            on:click={() => handleCardClick(i)}
           >
-            <span class="p">{x.ab}</span>
-            <span class="t">
-              <span>{x.t}</span>
-              <small>{x.tag}{#if x.now}<span class="badge">Now</span>{/if}</small>
-            </span>
+            <div class="p">
+              <span class="card-abbr">{x.ab}</span>
+              <span class="card-seq">0{i + 1}</span>
+            </div>
+            <div class="t">
+              <div class="title-row">
+                <strong>{x.t}</strong>
+                {#if x.now}<span class="badge">Now</span>{/if}
+              </div>
+              <small>{x.tag} &bull; {x.when}</small>
+            </div>
           </button>
         {/each}
       </div>
-    {:else if view === 'grid'}
+    </div>
+
+    <!-- Dots Navigation Indicator -->
+    <div class="slider-dots" role="tablist" aria-label="Slider navigation dots">
+      {#each EXPERIENCES as _, i}
+        <button
+          type="button"
+          class="slider-dot"
+          class:active={i === currentIndex}
+          role="tab"
+          aria-selected={i === currentIndex}
+          aria-label="Go to card {i + 1}"
+          on:click={() => goToIndex(i)}
+        ></button>
+      {/each}
+    </div>
+
+    <!-- Slider nav controls -->
+    <div class="tools" id="wh">
+      <button aria-label="Previous card" on:click={prevCard} disabled={currentIndex === 0}>Prev</button>
+      <button aria-label="Next card" on:click={nextCard} disabled={currentIndex >= TOTAL_ITEMS - 1}>Next</button>
+      <span class="mono mut" style="align-self:center;margin-left:.6rem">
+        Card {currentIndex + 1} of {TOTAL_ITEMS} &bull; Click card for details
+      </span>
+    </div>
+  {:else if view === 'grid'}
+    <div class="items grid" role="region" aria-label="Work experience items">
       {#each EXPERIENCES as x, i}
         <button
           class="it"
@@ -131,25 +216,16 @@
           </span>
         </button>
       {/each}
-    {:else}
-      <!-- list view -->
+    </div>
+  {:else}
+    <!-- list view -->
+    <div class="items list" role="region" aria-label="Work experience items">
       {#each EXPERIENCES as x, i}
         <button class="it" on:click={() => openDialog(i)}>
           <span>{x.t}{#if x.now}<span class="badge">Now</span>{/if}</span>
           <small>{x.tag}<br>{x.when}</small>
         </button>
       {/each}
-    {/if}
-  </div>
-
-  <!-- Wheel nav controls -->
-  {#if view === 'wheel'}
-    <div class="tools" id="wh">
-      <button aria-label="Previous" on:click={() => nudge(72)}>Prev</button>
-      <button aria-label="Next"     on:click={() => nudge(-72)}>Next</button>
-      <span class="mono mut" style="align-self:center;margin-left:.6rem">
-        Scroll, drag or use the arrow keys
-      </span>
     </div>
   {/if}
 
